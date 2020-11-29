@@ -1,4 +1,3 @@
-using  namespace std;
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -7,9 +6,6 @@ using  namespace std;
 #include <vector>
 #include <pthread.h>
 #include <unistd.h>
-
-
-
 
 using namespace std;
 //mutex and condition for protecting and managing queues
@@ -93,12 +89,8 @@ void *produce(void *threadNum) {
 		pthread_cond_signal(&qCond);
 		pthread_mutex_unlock(&qMutex);
 		sleep(sleeptime[threadRef]);
-
-
 	}
-
 }
-
 
 
 void *consume(void *threadNum){
@@ -109,19 +101,17 @@ void *consume(void *threadNum){
 	sleep(1);
 	while(1) {
 		pthread_mutex_lock(&qMutex);
-	        while(qVector[threadRef].empty()) {
-	            pthread_cond_wait(&qCond, &qMutex);
-	        }
-	        string newData = qVector[threadRef].front();
-	        qVector[threadRef].pop();
-
-	        cout<<threadRef << " c "<< newData << endl;
-	        //Now unlock the mutex
-	        pthread_mutex_unlock(&qMutex);
-
-	        // - and process the new data
-
+		while(qVector[threadRef].empty()) {
+			pthread_cond_wait(&qCond, &qMutex);
 	    }
+	    string newData = qVector[threadRef].front();
+	    qVector[threadRef].pop();
+	    cout<<threadRef << " c "<< newData << endl;
+	    //Now unlock the mutex
+	    pthread_mutex_unlock(&qMutex);
+	    sleep(sleeptime[threadRef]);
+	    // - and process the new data
+	}
 }
 
 
