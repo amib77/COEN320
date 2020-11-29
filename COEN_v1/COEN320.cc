@@ -15,6 +15,8 @@ pthread_cond_t qCond;
 // number of threads
 #define NUM_THREADS 8
 
+
+
 // Vector of queues that hold strings ...we will limit the queues to one entry each
 vector< queue<string> > qVector(NUM_THREADS);
 
@@ -48,8 +50,9 @@ int main(int argc, char* argv[]) {
 		pthread_create(&cthread[i], NULL, &consume, arg);
 
 	}
-	sleep(1);
+	sleep(2);
 
+	int count =0;
 	//main will parse the file every second and threads will read parsed data at their respective frequency
 	if (file)
 	while (getline(file, line))
@@ -62,11 +65,23 @@ int main(int argc, char* argv[]) {
 			pthread_mutex_unlock(&qMutex);
 			line = line.substr(pos + 1);
 		}
-		cout<<"main"<<endl;
-		sleep(1);
-	}
-	file.close();
 
+		sleep(1);
+		cout<<"main"<<endl;
+
+		if(count == 0){
+			break;
+		}
+		count++;
+
+	}
+
+	file.close();
+	for(int i = 0; i < NUM_THREADS; i++){
+		kill( pthread[i], -1 );
+		kill( cthread[i], -1 );
+
+	}
 	return 0;
 }
 
@@ -75,7 +90,7 @@ void *produce(void *threadNum) {
 	const int threadRef =  *((int *) threadNum);
 	cout<<"spt: "<< threadRef<<endl;
 
-	sleep(1);
+
 
 	while (1)
 	{
