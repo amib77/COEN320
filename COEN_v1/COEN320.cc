@@ -1,3 +1,4 @@
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -14,7 +15,6 @@ pthread_cond_t qCond = PTHREAD_COND_INITIALIZER;
 
 // number of threads x 2
 #define NUM_THREADS 8
-
 
 // Vector of queues that hold strings ...we will limit the queues to one entry each
 vector< queue<string> > qVector(NUM_THREADS);
@@ -141,7 +141,7 @@ void *consume(void *threadNum){
 	cout<<threadNum<<" Spawn fast consumer: "<<threadRef<<" I run every: "<<threadsleeptime<< "us"<<endl;
 	while(waitmain);
 	while(1) {
-		usleep(threadsleeptime);	  // opted to put sleep here as to handle all mutex instruction first and then
+
 
 		pthread_mutex_lock(&qMutex);
 		while(qVector[threadRef].empty())
@@ -158,6 +158,7 @@ void *consume(void *threadNum){
 	    cout<<threadRef << ": C "<<newData<<" "<< ccount<<" times run, I consumed:"<< consumed<<endl;
 
 	    // - and process the new data
+	    usleep(threadsleeptime);	  // opted to put sleep here as to handle all mutex instruction first and then
 	}
 }
 
@@ -207,7 +208,7 @@ void *sconsume(void *threadNum){
 	int consumed = 0;
 	while(waitmain);
 	while(1) {
-		sleep(threadsleeptime);
+
 		pthread_mutex_lock(&qMutex);
 		while(qVector[threadRef].empty())
 			pthread_cond_wait(&qCond, &qMutex);
@@ -223,6 +224,7 @@ void *sconsume(void *threadNum){
 
 	    ccount++;
 	    cout<<threadRef << ": C "<<newData<<" "<< ccount<<" times run, I consumed:"<< consumed<<endl;
+	    sleep(threadsleeptime);
 	}
 	    // - and process the new data
 }
